@@ -19,7 +19,6 @@ const getTechnologies = (req, res) => {
           _id: element._id,
         });
       });
-      console.log(techonologies);
       res.send(techonologies);
     }
   });
@@ -38,7 +37,6 @@ const postTechnology = (req, res, next) => {
       contentType: "image/png",
     },
   };
-  console.log(tech);
   Technology.create(tech, (err, item) => {
     if (err) {
       console.log(err);
