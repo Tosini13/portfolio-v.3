@@ -45,7 +45,7 @@ const postTechnology = (req, res, next) => {
       console.log(err);
     } else {
       // item.save();
-      res.redirect("/");
+      res.send(tech);
     }
   });
 };
@@ -62,7 +62,17 @@ const putTechnology = (req, res, next) => {
 
 const deleteTechnology = (req, res, next) => {
   Technology.findByIdAndRemove({ _id: req.params.id })
-    .then((tech) => res.send(tech))
+    .then((tech) => {
+      fs.unlink(
+        path.join(
+          path.dirname(require.main.filename) + "/uploads/" + tech.logo.name
+        ),
+        (err) => {
+          if (err) console.log(err);
+          res.send(tech);
+        }
+      );
+    })
     .catch(next);
 };
 
