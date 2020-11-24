@@ -11,7 +11,7 @@ const TechnolodySchema = new Schema({
     required: false,
   },
   logo: {
-    data: Buffer,
+    name: String,
     contentType: String,
   },
 });

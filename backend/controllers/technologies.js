@@ -10,10 +10,17 @@ const getTechnologies = (req, res) => {
     } else {
       let techonologies = [];
       items.forEach((element) => {
+        const file = fs.readFileSync(
+          path.join(
+            path.dirname(require.main.filename) +
+              "/uploads/" +
+              element.logo.name
+          )
+        );
         techonologies.push({
-          logo: `data:image/${
-            element.logo.contentType
-          };base64, ${element.logo.data.toString("base64")}`,
+          logo: `data:image/${element.logo.contentType};base64, ${file.toString(
+            "base64"
+          )}`,
           contentType: element.logo.contentType,
           name: element.name,
           _id: element._id,
@@ -29,11 +36,7 @@ const postTechnology = (req, res, next) => {
     name: req.body.name,
     description: req.body.description,
     logo: {
-      data: fs.readFileSync(
-        path.join(
-          path.dirname(require.main.filename) + "/uploads/" + req.file.filename
-        )
-      ),
+      name: req.file.filename,
       contentType: "image/png",
     },
   };
