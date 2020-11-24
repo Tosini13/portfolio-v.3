@@ -21,10 +21,11 @@ export class Technology {
   description?: string;
   logo?: any;
 
-  constructor({ _id, name, description }: TechnologyType) {
+  constructor({ _id, name, description, logo }: TechnologyType) {
     this.id = _id;
     this.name = name;
     this.description = description;
+    this.logo = logo;
   }
 }
 
@@ -39,33 +40,47 @@ class TechnologiesStore {
   fetch = async () => {
     const data = await axios.get(`${apiUrl}/technologies`);
     const technology = data.data;
+    console.log(technology);
     this.technologies = technology.map(
       (tech: any) =>
         new Technology({
           _id: tech._id,
           name: tech.name,
           description: tech.description,
+          logo: tech.logo,
         })
     );
   };
 
   add = async (technology: TechnologyCreationType) => {
     console.log(technology);
-    const data = await axios.post<TechnologyType>(`${apiUrl}/technologies`, {
-      name: technology.name,
-      description: technology.description,
-      logo: technology.logo,
-    });
-    console.log(data);
-    this.technologies = [
-      ...this.technologies,
-      new Technology({
-        _id: data.data._id,
-        name: data.data.name,
-        description: data.data.description,
-        logo: data.data.logo,
-      }),
-    ];
+    let formData = new FormData();
+    formData.append("name", technology.name);
+    // formData.append("desc", technology.description);
+    formData.append("logo", technology.logo);
+    // const data = await axios.post<TechnologyType>(`${apiUrl}/technologies`, {
+    //   name: technology.name,
+    //   description: technology.description,
+    //   logo: technology.logo,
+    // });
+    console.log(formData);
+    axios
+      .post<TechnologyType>(`${apiUrl}/technologies`, formData, {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      })
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
+    // this.technologies = [
+    //   ...this.technologies,
+    //   new Technology({
+    //     _id: data.data._id,
+    //     name: data.data.name,
+    //     description: data.data.description,
+    //     logo: data.data.logo,
+    //   }),
+    // ];
   };
 
   update = async (technology: Technology) => {

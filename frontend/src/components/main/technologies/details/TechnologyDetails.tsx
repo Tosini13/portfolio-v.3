@@ -95,6 +95,7 @@ const TechnologyDetails: React.FC<TechnologyDetailsProps> = ({
 }) => {
   const [hovered, setHovered] = useState<boolean>(false);
 
+  console.log(tech);
   return (
     <GridItemStyled
       item
@@ -111,7 +112,7 @@ const TechnologyDetails: React.FC<TechnologyDetailsProps> = ({
             moved={parseStyledBoolean(hovered || view !== ViewTechnologies.row)}
           >
             {logo ? (
-              <img src={logo} alt="logo" style={{ width: "100px" }} />
+              <img src={tech.logo} alt="logo" style={{ width: "100px" }} />
             ) : (
               <BuildIcon fontSize="large" />
             )}

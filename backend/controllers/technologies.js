@@ -1,29 +1,52 @@
-const mongoose = require("mongoose");
+var fs = require("fs");
+var path = require("path");
+
 const Technology = require("../models/technology");
 
 const getTechnologies = (req, res) => {
-  Technology.find({}).then((techs) => {
-    res.send(techs);
+  Technology.find({}, (err, items) => {
+    if (err) {
+      console.log(err);
+    } else {
+      let techonologies = [];
+      items.forEach((element) => {
+        techonologies.push({
+          logo: `data:image/${
+            element.logo.contentType
+          };base64, ${element.logo.data.toString("base64")}`,
+          contentType: element.logo.contentType,
+          name: element.name,
+          _id: element._id,
+        });
+      });
+      console.log(techonologies);
+      res.send(techonologies);
+    }
   });
 };
 
 const postTechnology = (req, res, next) => {
-  console.log("post");
-  const url = req.protocol + "://" + req.get("host");
-  console.log(url + "/public/" + req.body.logo.name);
-  const tech = new Technology({
-    _id: new mongoose.Types.ObjectId(),
+  const tech = {
     name: req.body.name,
-    description: req.body.name,
-    logo: url + "/public/" + req.body.logo.name,
+    description: req.body.description,
+    logo: {
+      data: fs.readFileSync(
+        path.join(
+          path.dirname(require.main.filename) + "/uploads/" + req.file.filename
+        )
+      ),
+      contentType: "image/png",
+    },
+  };
+  console.log(tech);
+  Technology.create(tech, (err, item) => {
+    if (err) {
+      console.log(err);
+    } else {
+      // item.save();
+      res.redirect("/");
+    }
   });
-
-  tech
-    .save()
-    .then((tech) => {
-      res.send(tech);
-    })
-    .catch(next);
 };
 
 const putTechnology = (req, res, next) => {
