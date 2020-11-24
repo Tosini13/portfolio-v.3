@@ -56,31 +56,26 @@ class TechnologiesStore {
     console.log(technology);
     let formData = new FormData();
     formData.append("name", technology.name);
-    // formData.append("desc", technology.description);
     formData.append("logo", technology.logo);
-    // const data = await axios.post<TechnologyType>(`${apiUrl}/technologies`, {
-    //   name: technology.name,
-    //   description: technology.description,
-    //   logo: technology.logo,
-    // });
-    console.log(formData);
     axios
       .post<TechnologyType>(`${apiUrl}/technologies`, formData, {
         headers: {
           "content-type": "multipart/form-data",
         },
       })
-      .then((data) => console.log(data))
+      .then(
+        (data) =>
+          (this.technologies = [
+            ...this.technologies,
+            new Technology({
+              _id: data.data._id,
+              name: data.data.name,
+              description: data.data.description,
+              logo: data.data.logo,
+            }),
+          ])
+      )
       .catch((err) => console.log(err));
-    // this.technologies = [
-    //   ...this.technologies,
-    //   new Technology({
-    //     _id: data.data._id,
-    //     name: data.data.name,
-    //     description: data.data.description,
-    //     logo: data.data.logo,
-    //   }),
-    // ];
   };
 
   update = async (technology: Technology) => {
