@@ -9,6 +9,7 @@ import Technologies from "./components/main/technologies";
 import Skills from "./components/main/skills";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { LocationConst } from "./models/const";
+import Projects from "./components/main/projects";
 
 const Body = styled.div`
   display: flex;
@@ -30,6 +31,7 @@ function App() {
             <Route exact path={LocationConst.aboutMe} component={AboutMe} />
             <Route path={LocationConst.skills} component={Skills} />
             <Route path={LocationConst.technologies} component={Technologies} />
+            <Route path={LocationConst.projects} component={Projects} />
           </Switch>
         </Main>
       </Body>
