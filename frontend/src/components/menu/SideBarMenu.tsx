@@ -3,6 +3,7 @@ import React from "react";
 import EmojiPeopleIcon from "@material-ui/icons/EmojiPeople";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import BuildIcon from "@material-ui/icons/Build";
+import LaptopMacIcon from "@material-ui/icons/LaptopMac";
 
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
@@ -65,6 +66,20 @@ const SideBarMenu: React.FC<SideBarMenuProps> = () => {
             </Grid>
             <Grid item>
               <ListItemText primary={"Technologies"} />
+            </Grid>
+          </Grid>
+        </LinkStyled>
+      </ListItem>
+      <ListItem button>
+        <LinkStyled to={LocationConst.projects}>
+          <Grid container>
+            <Grid item>
+              <ListItemIcon>
+                <LaptopMacIcon color="secondary" />
+              </ListItemIcon>
+            </Grid>
+            <Grid item>
+              <ListItemText primary={"Projects"} />
             </Grid>
           </Grid>
         </LinkStyled>
