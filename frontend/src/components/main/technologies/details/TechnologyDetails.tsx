@@ -104,7 +104,6 @@ const TechnologyDetails: React.FC<TechnologyDetailsProps> = ({
 }) => {
   const [hovered, setHovered] = useState<boolean>(false);
 
-  console.log(tech);
   return (
     <GridItemStyled
       item
