@@ -20,7 +20,11 @@ router.post(
   upload.single("logo"),
   technologies.postTechnology
 );
-router.put("/technologies/:id", technologies.putTechnology);
+router.put(
+  "/technologies/:id",
+  upload.single("logo"),
+  technologies.putTechnology
+);
 router.delete("/technologies/:id", technologies.deleteTechnology);
 
 module.exports = router;

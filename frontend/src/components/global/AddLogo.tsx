@@ -60,6 +60,7 @@ type AddLogo = {
 };
 
 const AddLogo: React.FC<AddLogo> = ({ image, setImage }) => {
+  console.log(image);
   const handleChangeImage = async (e: any) => {
     const image = e.target.files[0];
     const options = {
