@@ -28,7 +28,6 @@ const Technologies: React.FC = observer(() => {
   useEffect(() => {
     fetch();
   }, [fetch]);
-  console.log(technologies);
 
   const [edit, setEdit] = useState<Technology | boolean>();
   const [action, setAction] = useState<boolean>(false);
@@ -67,7 +66,6 @@ const Technologies: React.FC = observer(() => {
     <SectionComponent title={"Technologies"}>
       <Grid container spacing={2} alignItems="center" justify="space-around">
         {technologies.map((tech) => {
-          console.log(tech);
           return (
             <TechnologyDetails
               key={tech.id}

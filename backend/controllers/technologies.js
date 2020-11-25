@@ -36,7 +36,6 @@ const getTechnologies = (req, res) => {
 };
 
 const postTechnology = (req, res, next) => {
-  console.log(req.body);
   const tech = {
     name: req.body.name,
     description: req.body.description,
@@ -55,8 +54,27 @@ const postTechnology = (req, res, next) => {
 };
 
 const putTechnology = (req, res, next) => {
-  Technology.findByIdAndUpdate({ _id: req.params.id }, req.body)
+  const techData = {
+    name: req.body.name,
+    description: req.body.description,
+    logo: {
+      name: req.file.filename,
+      contentType: "image/png",
+    },
+  };
+  Technology.findByIdAndUpdate({ _id: req.params.id }, techData)
     .then((tech) => {
+      fs.unlink(
+        path.join(
+          path.dirname(require.main.filename) +
+            "/" +
+            uploadsTechnologiesURL +
+            tech.logo.name
+        ),
+        (err) => {
+          if (err) console.log(err);
+        }
+      );
       Technology.findOne({ _id: req.params.id })
         .then((tech) => res.send(tech))
         .catch(next);

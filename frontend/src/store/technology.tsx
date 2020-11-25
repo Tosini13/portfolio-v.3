@@ -82,11 +82,20 @@ class TechnologiesStore {
   };
 
   update = async (technology: Technology) => {
+    console.log(technology);
+    let formData = new FormData();
+    formData.append("name", technology.name);
+    if (technology.description) {
+      formData.append("description", technology.description);
+    }
+    formData.append("logo", technology.logo);
     const data = await axios.put<TechnologyType>(
       `${apiUrl}/technologies/${technology.id}`,
+      formData,
       {
-        name: technology.name,
-        description: technology.description,
+        headers: {
+          "content-type": "multipart/form-data",
+        },
       }
     );
     this.technologies = this.technologies.map((tech) =>

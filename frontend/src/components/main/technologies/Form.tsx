@@ -37,7 +37,14 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
   const technologiesStore = useContext(StoreTechnologiesContext);
   const { add, update } = technologiesStore;
 
-  const [image, setImage] = useState<any>();
+  const [name, setName] = useState<string>(technology ? technology.name : "");
+  const [description, setDescription] = useState<string>(
+    technology?.description ? technology.description : ""
+  );
+  const [image, setImage] = useState<any>(
+    technology ? technology.logo : undefined
+  );
+
   const { handleSubmit, register, errors } = useForm();
   const onSubmit = (values: any) => {
     if (technology) {
@@ -45,6 +52,7 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
         id: technology.id,
         name: values.name,
         description: values.description,
+        logo: image,
       });
     } else {
       add({ name: values.name, description: values.description, logo: image });
@@ -59,11 +67,6 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
   const handleChangeDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDescription(e.target.value);
   };
-
-  const [name, setName] = useState<string>(technology ? technology.name : "");
-  const [description, setDescription] = useState<string>(
-    technology?.description ? technology.description : ""
-  );
 
   useEffect(() => {
     setName(technology ? technology.name : "");
