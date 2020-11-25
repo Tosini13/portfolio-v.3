@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 
 import BuildIcon from "@material-ui/icons/Build";
-import { Grid } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
 
 import { Technology } from "../../../../store/technology";
-import styled from "styled-components";
 import logo from "../../../../images/react_logo.png";
 
 import { ViewTechnologies } from "../index";
 import { Id } from "../../../../models/types";
 import TechnologyContent from "./Content";
-import { parseStyledBoolean } from "../../../../models/global";
 import { mainTheme } from "../../../../styled/config";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import EditIcon from "@material-ui/icons/Edit";
+import styled from "styled-components";
+import { Grid, IconButton } from "@material-ui/core";
+import { parseStyledBoolean } from "../../../../models/global";
 
 const gridView = {
   column: {
@@ -78,6 +80,13 @@ const ContentGridStyled = styled(Grid)<{ opened?: string }>`
       : `transform: rotate(80deg)  translate(0px, -35px)`}
 `;
 
+const ActionGridStyled = styled(Grid)<{ active?: string }>`
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  ${(props) => (props.active ? `display: block` : `display: none`)}
+`;
+
 export interface TechnologyDetailsProps {
   tech: Technology;
   remove: (techId: Id) => Promise<void>;
@@ -95,7 +104,6 @@ const TechnologyDetails: React.FC<TechnologyDetailsProps> = ({
 }) => {
   const [hovered, setHovered] = useState<boolean>(false);
 
-  console.log(tech);
   return (
     <GridItemStyled
       item
@@ -123,13 +131,16 @@ const TechnologyDetails: React.FC<TechnologyDetailsProps> = ({
               hovered || view !== ViewTechnologies.row
             )}
           >
-            <TechnologyContent
-              tech={tech}
-              remove={remove}
-              action={action}
-              handleOpen={handleOpen}
-            />
+            <TechnologyContent tech={tech} />
           </ContentGridStyled>
+          <ActionGridStyled item active={parseStyledBoolean(action)}>
+            <IconButton onClick={() => handleOpen(tech)}>
+              <EditIcon color="primary" />
+            </IconButton>
+            <IconButton onClick={() => remove(tech.id)}>
+              <DeleteForeverIcon color="primary" />
+            </IconButton>
+          </ActionGridStyled>
         </Grid>
       </PaperItemStyled>
     </GridItemStyled>

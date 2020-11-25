@@ -1,6 +1,8 @@
 var fs = require("fs");
 var path = require("path");
 
+const uploadsTechnologiesURL = "uploads/technologies/";
+
 const Technology = require("../models/technology");
 
 const getTechnologies = (req, res) => {
@@ -13,7 +15,8 @@ const getTechnologies = (req, res) => {
         const file = fs.readFileSync(
           path.join(
             path.dirname(require.main.filename) +
-              "/uploads/" +
+              "/" +
+              uploadsTechnologiesURL +
               element.logo.name
           )
         );
@@ -23,6 +26,7 @@ const getTechnologies = (req, res) => {
           )}`,
           contentType: element.logo.contentType,
           name: element.name,
+          description: element.description,
           _id: element._id,
         });
       });
@@ -32,6 +36,7 @@ const getTechnologies = (req, res) => {
 };
 
 const postTechnology = (req, res, next) => {
+  console.log(req.body);
   const tech = {
     name: req.body.name,
     description: req.body.description,
@@ -40,11 +45,10 @@ const postTechnology = (req, res, next) => {
       contentType: "image/png",
     },
   };
-  Technology.create(tech, (err, item) => {
+  Technology.create(tech, (err) => {
     if (err) {
       console.log(err);
     } else {
-      // item.save();
       res.send(tech);
     }
   });
@@ -65,7 +69,10 @@ const deleteTechnology = (req, res, next) => {
     .then((tech) => {
       fs.unlink(
         path.join(
-          path.dirname(require.main.filename) + "/uploads/" + tech.logo.name
+          path.dirname(require.main.filename) +
+            "/" +
+            uploadsTechnologiesURL +
+            tech.logo.name
         ),
         (err) => {
           if (err) console.log(err);
@@ -81,4 +88,5 @@ module.exports = {
   postTechnology,
   putTechnology,
   deleteTechnology,
+  uploadsTechnologiesURL,
 };

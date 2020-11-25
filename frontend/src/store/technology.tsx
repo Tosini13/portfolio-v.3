@@ -39,9 +39,9 @@ class TechnologiesStore {
 
   fetch = async () => {
     const data = await axios.get(`${apiUrl}/technologies`);
-    const technology = data.data;
-    console.log(technology);
-    this.technologies = technology.map(
+    const technologies = data.data;
+    console.log(technologies);
+    this.technologies = technologies.map(
       (tech: any) =>
         new Technology({
           _id: tech._id,
@@ -56,6 +56,9 @@ class TechnologiesStore {
     console.log(technology);
     let formData = new FormData();
     formData.append("name", technology.name);
+    if (technology.description) {
+      formData.append("description", technology.description);
+    }
     formData.append("logo", technology.logo);
     axios
       .post<TechnologyType>(`${apiUrl}/technologies`, formData, {
@@ -64,14 +67,14 @@ class TechnologiesStore {
         },
       })
       .then(
-        (data) =>
+        (res) =>
           (this.technologies = [
             ...this.technologies,
             new Technology({
-              _id: data.data._id,
-              name: data.data.name,
-              description: data.data.description,
-              logo: data.data.logo,
+              _id: res.data._id,
+              name: res.data.name,
+              description: res.data.description,
+              logo: res.data.logo,
             }),
           ])
       )
