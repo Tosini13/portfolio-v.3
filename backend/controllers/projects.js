@@ -1,11 +1,46 @@
 var fs = require("fs");
 var path = require("path");
+const multer = require("multer");
 
 const uploadsProjectsURL = "uploads/projects/";
 
 const Project = require("../models/projects");
 
+const getProjects = (req, res) => {
+  Project.find({}, (err, items) => {
+    if (err) {
+      console.log(err);
+    } else {
+      let projects = [];
+      items.forEach((element) => {
+        const file = fs.readFileSync(
+          path.join(
+            path.dirname(require.main.filename) +
+              "/" +
+              uploadsProjectsURL +
+              element.view.name
+          )
+        );
+        projects.push({
+          view: `data:image/${element.view.contentType};base64, ${file.toString(
+            "base64"
+          )}`,
+          contentType: element.view.contentType,
+          name: element.name,
+          description: element.description,
+          techonologies: element.techonologies,
+          links: element.links,
+          _id: element._id,
+        });
+      });
+      res.send(projects);
+    }
+  });
+};
+
 const postProject = (req, res, next) => {
+  console.log(req.body);
+  console.log(JSON.parse(req.body.links));
   const project = {
     name: req.body.name,
     description: req.body.description,
@@ -13,17 +48,80 @@ const postProject = (req, res, next) => {
       name: req.file.filename,
       contentType: "image/png",
     },
+    techonologies: req.body.techonologies,
+    links: JSON.parse(req.body.links),
   };
   Project.create(project, (err) => {
     if (err) {
       console.log(err);
     } else {
-      res.send(tech);
+      res.send(project);
     }
   });
 };
 
+const putTechnology = (req, res, next) => {
+  const techData = {
+    name: req.body.name,
+    description: req.body.description,
+    logo: {
+      name: req.file.filename,
+      contentType: "image/png",
+    },
+  };
+  Project.findByIdAndUpdate({ _id: req.params.id }, techData)
+    .then((tech) => {
+      fs.unlink(
+        path.join(
+          path.dirname(require.main.filename) +
+            "/" +
+            uploadsTechnologiesURL +
+            tech.logo.name
+        ),
+        (err) => {
+          if (err) console.log(err);
+        }
+      );
+      Technology.findOne({ _id: req.params.id })
+        .then((tech) => res.send(tech))
+        .catch(next);
+    })
+    .catch(next);
+};
+
+const deleteProject = (req, res, next) => {
+  Project.findByIdAndRemove({ _id: req.params.id })
+    .then((project) => {
+      fs.unlink(
+        path.join(
+          path.dirname(require.main.filename) +
+            "/" +
+            uploadsProjectsURL +
+            project.view.name
+        ),
+        (err) => {
+          if (err) console.log(err);
+          res.send(project);
+        }
+      );
+    })
+    .catch(next);
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsProjectsURL);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + "-" + Date.now());
+  },
+});
+
+const upload = multer({ storage: storage });
+
 module.exports = {
+  getProjects,
   postProject,
-  uploadsProjectsURL,
+  deleteProject,
+  upload,
 };

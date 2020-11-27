@@ -20,7 +20,7 @@ const Projects: React.FC<ProjectsProps> = observer(() => {
 
   return (
     <SectionComponent title={"Projects"}>
-      <Grid container spacing={2} alignItems="center" justify="space-around">
+      <Grid container spacing={3} alignItems="center" justify="space-evenly">
         {projects.map((project) => (
           <Grid item>
             <ProjectSummary project={project} />

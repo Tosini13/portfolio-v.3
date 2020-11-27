@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { Grid, Paper } from "@material-ui/core";
 
@@ -19,21 +19,41 @@ const PaperItemStyled = motion.custom(styled(Paper)<{ view: string }>`
 `);
 
 const GridItemStyled = motion.custom(styled(Grid)`
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  color: white;
 `);
+
+const variantsContent = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      delay: 0.1,
+      duration: 0.3,
+      type: "tween",
+    },
+  },
+};
 
 export interface ProjectSummaryProps {
   project: Project;
 }
 
 const ProjectSummary: React.FC<ProjectSummaryProps> = ({ project }) => {
+  const [focus, setFocus] = useState(false);
+
   return (
     <PaperItemStyled
       view={project.logo}
       whileHover={{
         scale: 1.3,
-        transition: { type: "spring", stiffness: 400 },
+        transition: { type: "spring", stiffness: 350 },
       }}
+      onHoverStart={() => setFocus(true)}
+      onHoverEnd={() => setFocus(false)}
     >
       <Grid
         container
@@ -41,8 +61,26 @@ const ProjectSummary: React.FC<ProjectSummaryProps> = ({ project }) => {
         justify="space-between"
         style={{ height: "100%" }}
       >
-        <GridItemStyled item>{project.name}</GridItemStyled>
-        <GridItemStyled item>{project.name}</GridItemStyled>
+        {focus ? (
+          <AnimatePresence>
+            <GridItemStyled
+              item
+              variants={variantsContent}
+              initial="hidden"
+              animate="visible"
+            >
+              {project.name}
+            </GridItemStyled>
+            <GridItemStyled
+              item
+              variants={variantsContent}
+              initial="hidden"
+              animate="visible"
+            >
+              {project.name}
+            </GridItemStyled>{" "}
+          </AnimatePresence>
+        ) : null}
       </Grid>
     </PaperItemStyled>
   );

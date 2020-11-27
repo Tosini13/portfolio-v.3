@@ -1,30 +1,28 @@
 const express = require("express");
-const multer = require("multer");
 const router = express.Router();
 const technologies = require("../controllers/technologies");
+const projects = require("../controllers/projects");
 
-var storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, technologies.uploadsTechnologiesURL);
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + "-" + Date.now());
-  },
-});
+//#region PROJECTS
+router.get("/projects", projects.getProjects);
+router.post("/projects", projects.upload.single("view"), projects.postProject);
 
-var upload = multer({ storage: storage });
+router.delete("/projects/:id", projects.deleteProject);
+//#endregion PROJECTS
 
+//#region TECHNOLOGIES
 router.get("/technologies", technologies.getTechnologies);
 router.post(
   "/technologies",
-  upload.single("logo"),
+  technologies.upload.single("logo"),
   technologies.postTechnology
 );
 router.put(
   "/technologies/:id",
-  upload.single("logo"),
+  technologies.upload.single("logo"),
   technologies.putTechnology
 );
 router.delete("/technologies/:id", technologies.deleteTechnology);
+//#endregion TECHNOLOGIES
 
 module.exports = router;

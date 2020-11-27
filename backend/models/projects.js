@@ -1,5 +1,17 @@
 const mongoose = require("mongoose");
+const Technology = require("./technology");
 const Schema = mongoose.Schema;
+
+const Links = new Schema({
+  github: {
+    type: String,
+    required: false,
+  },
+  www: {
+    type: String,
+    required: false,
+  },
+});
 
 const ProjectSchema = new Schema({
   name: {
@@ -13,6 +25,15 @@ const ProjectSchema = new Schema({
   view: {
     name: String,
     contentType: String,
+  },
+  technologies: {
+    type: [Schema.Types.ObjectId],
+    required: false,
+  },
+  links: {
+    type: Links,
+    default: {},
+    required: false,
   },
 });
 

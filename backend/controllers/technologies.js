@@ -1,5 +1,6 @@
 var fs = require("fs");
 var path = require("path");
+const multer = require("multer");
 
 const uploadsTechnologiesURL = "uploads/technologies/";
 
@@ -101,10 +102,21 @@ const deleteTechnology = (req, res, next) => {
     .catch(next);
 };
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsTechnologiesURL);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + "-" + Date.now());
+  },
+});
+
+const upload = multer({ storage: storage });
+
 module.exports = {
   getTechnologies,
   postTechnology,
   putTechnology,
   deleteTechnology,
-  uploadsTechnologiesURL,
+  upload,
 };
