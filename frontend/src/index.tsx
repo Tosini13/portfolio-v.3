@@ -7,12 +7,15 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import { mainTheme } from "./styled/config";
 import { StylesProvider } from "@material-ui/core/styles";
 import { StoreTechnologiesProvider } from "./store/technology";
+import { StoreProjectsProvider } from "./store/project";
 
 ReactDOM.render(
   <StylesProvider injectFirst>
     <ThemeProvider theme={mainTheme}>
       <StoreTechnologiesProvider>
-        <App />
+        <StoreProjectsProvider>
+          <App />
+        </StoreProjectsProvider>
       </StoreTechnologiesProvider>
     </ThemeProvider>
   </StylesProvider>,

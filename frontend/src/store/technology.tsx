@@ -40,7 +40,6 @@ class TechnologiesStore {
   fetch = async () => {
     const data = await axios.get(`${apiUrl}/technologies`);
     const technologies = data.data;
-    console.log(technologies);
     this.technologies = technologies.map(
       (tech: any) =>
         new Technology({

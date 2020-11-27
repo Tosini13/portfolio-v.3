@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Technology = require("./technology");
 const Schema = mongoose.Schema;
 
-const Links = new Schema({
+const Links = {
   github: {
     type: String,
     required: false,
@@ -11,7 +11,7 @@ const Links = new Schema({
     type: String,
     required: false,
   },
-});
+};
 
 const ProjectSchema = new Schema({
   name: {

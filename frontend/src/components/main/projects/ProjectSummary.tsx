@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { Grid, Paper } from "@material-ui/core";
+import { Grid, IconButton, Paper } from "@material-ui/core";
+import GitHubIcon from "@material-ui/icons/GitHub";
+import LanguageIcon from "@material-ui/icons/Language";
 
 import { Project } from "../../../store/project";
 import styled from "styled-components";
@@ -20,7 +22,7 @@ const PaperItemStyled = motion.custom(styled(Paper)<{ view: string }>`
 
 const GridItemStyled = motion.custom(styled(Grid)`
   background-color: rgba(0, 0, 0, 0.5);
-  padding: 10px;
+  padding: 5px;
   color: white;
 `);
 
@@ -47,10 +49,10 @@ const ProjectSummary: React.FC<ProjectSummaryProps> = ({ project }) => {
 
   return (
     <PaperItemStyled
-      view={project.logo}
+      view={project.view}
       whileHover={{
         scale: 1.3,
-        transition: { type: "spring", stiffness: 350 },
+        transition: { ease: "easeOut" },
       }}
       onHoverStart={() => setFocus(true)}
       onHoverEnd={() => setFocus(false)}
@@ -62,24 +64,58 @@ const ProjectSummary: React.FC<ProjectSummaryProps> = ({ project }) => {
         style={{ height: "100%" }}
       >
         {focus ? (
-          <AnimatePresence>
-            <GridItemStyled
-              item
-              variants={variantsContent}
-              initial="hidden"
-              animate="visible"
-            >
-              {project.name}
-            </GridItemStyled>
-            <GridItemStyled
-              item
-              variants={variantsContent}
-              initial="hidden"
-              animate="visible"
-            >
-              {project.name}
-            </GridItemStyled>{" "}
-          </AnimatePresence>
+          <>
+            <AnimatePresence>
+              <GridItemStyled
+                item
+                variants={variantsContent}
+                initial="hidden"
+                animate="visible"
+              >
+                <Grid container justify="space-between" alignItems="center">
+                  <Grid item>{project.name}</Grid>
+                  <Grid item>
+                    <Grid container spacing={1}>
+                      {project.links?.github ? (
+                        <Grid item>
+                          <IconButton
+                            color="secondary"
+                            href={project.links.github}
+                            target="_blank"
+                            size="small"
+                          >
+                            <GitHubIcon fontSize="small" />
+                          </IconButton>
+                        </Grid>
+                      ) : null}
+                      {project.links?.www ? (
+                        <Grid item>
+                          <IconButton
+                            color="secondary"
+                            href={project.links.www}
+                            target="_blank"
+                            size="small"
+                          >
+                            <LanguageIcon fontSize="small" />
+                          </IconButton>
+                        </Grid>
+                      ) : null}
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </GridItemStyled>
+            </AnimatePresence>
+            <AnimatePresence>
+              <GridItemStyled
+                item
+                variants={variantsContent}
+                initial="hidden"
+                animate="visible"
+              >
+                Technologies
+              </GridItemStyled>
+            </AnimatePresence>
+          </>
         ) : null}
       </Grid>
     </PaperItemStyled>

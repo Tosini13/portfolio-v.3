@@ -39,8 +39,6 @@ const getProjects = (req, res) => {
 };
 
 const postProject = (req, res, next) => {
-  console.log(req.body);
-  console.log(JSON.parse(req.body.links));
   const project = {
     name: req.body.name,
     description: req.body.description,
@@ -122,6 +120,7 @@ const upload = multer({ storage: storage });
 module.exports = {
   getProjects,
   postProject,
+  putTechnology,
   deleteProject,
   upload,
 };
