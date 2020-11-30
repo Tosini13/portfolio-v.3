@@ -168,7 +168,7 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
           </GridItemStyled>
           <GridItemStyled item>
             <Button variant="contained" color="primary" type="submit">
-              ADD
+              {project ? "UPDATE" : "ADD"}
             </Button>
           </GridItemStyled>
         </GridContainerStyled>

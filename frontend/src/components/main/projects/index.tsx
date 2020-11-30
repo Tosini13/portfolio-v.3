@@ -50,7 +50,11 @@ const Projects: React.FC<ProjectsProps> = observer(() => {
       <Grid container spacing={3} alignItems="center" justify="space-evenly">
         {projects.map((project) => (
           <Grid item key={project.id}>
-            <ProjectSummary project={project} />
+            <ProjectSummary
+              handleOpen={handleOpen}
+              project={project}
+              action={action}
+            />
           </Grid>
         ))}
       </Grid>

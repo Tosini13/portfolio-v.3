@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { Grid, IconButton, Paper } from "@material-ui/core";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import EditIcon from "@material-ui/icons/Edit";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import LanguageIcon from "@material-ui/icons/Language";
+import { Grid, IconButton, Paper } from "@material-ui/core";
 
-import { Project } from "../../../store/project";
+import { Project, StoreProjectsContext } from "../../../store/project";
 import styled from "styled-components";
 
 const PaperItemStyled = motion.custom(styled(Paper)<{ view: string }>`
@@ -14,7 +16,6 @@ const PaperItemStyled = motion.custom(styled(Paper)<{ view: string }>`
   width: 300px;
   height: 200px;
   box-sizing: border-box;
-  overflow: hidden;
   background-repeat: no-repeat;
   background-size: cover;
   ${(props) => (props.view ? `background-image: url('${props.view}');` : ``)}
@@ -26,6 +27,12 @@ const GridItemStyled = motion.custom(styled(Grid)`
   color: white;
 `);
 
+const ActionProjectStyled = motion.custom(styled(Grid)`
+  position: absolute;
+  top: 0px;
+  right: 0px;
+`);
+
 const variantsContent = {
   hidden: {
     opacity: 0,
@@ -33,7 +40,19 @@ const variantsContent = {
   visible: {
     opacity: 1,
     transition: {
-      delay: 0.1,
+      type: "tween",
+    },
+  },
+};
+
+const variantsActions = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    y: "-105%",
+    transition: {
       duration: 0.3,
       type: "tween",
     },
@@ -42,21 +61,51 @@ const variantsContent = {
 
 export interface ProjectSummaryProps {
   project: Project;
+  action: boolean;
+  handleOpen: (project: Project) => void;
 }
 
-const ProjectSummary: React.FC<ProjectSummaryProps> = ({ project }) => {
+const ProjectSummary: React.FC<ProjectSummaryProps> = ({
+  project,
+  action,
+  handleOpen,
+}) => {
+  const technologiesStore = useContext(StoreProjectsContext);
+  const { remove } = technologiesStore;
   const [focus, setFocus] = useState(false);
 
   return (
     <PaperItemStyled
       view={project.view}
-      whileHover={{
-        scale: 1.3,
-        transition: { ease: "easeOut" },
-      }}
+      whileHover={
+        action
+          ? {}
+          : {
+              scale: 1.3,
+              transition: { ease: "easeOut" },
+            }
+      }
       onHoverStart={() => setFocus(true)}
       onHoverEnd={() => setFocus(false)}
     >
+      <AnimatePresence>
+        {action ? (
+          <ActionProjectStyled
+            item
+            variants={variantsActions}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+          >
+            <IconButton onClick={() => handleOpen(project)}>
+              <EditIcon color="primary" />
+            </IconButton>
+            <IconButton onClick={() => remove(project.id)}>
+              <DeleteForeverIcon color="primary" />
+            </IconButton>
+          </ActionProjectStyled>
+        ) : null}
+      </AnimatePresence>
       <Grid
         container
         direction="column"
@@ -112,7 +161,7 @@ const ProjectSummary: React.FC<ProjectSummaryProps> = ({ project }) => {
                 initial="hidden"
                 animate="visible"
               >
-                Technologies
+                {project.description}
               </GridItemStyled>
             </AnimatePresence>
           </>

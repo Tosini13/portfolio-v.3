@@ -58,29 +58,32 @@ const postProject = (req, res, next) => {
   });
 };
 
-const putTechnology = (req, res, next) => {
-  const techData = {
+const putProject = (req, res, next) => {
+  console.log(req.body.links);
+  const projectData = {
     name: req.body.name,
     description: req.body.description,
-    logo: {
+    view: {
       name: req.file.filename,
       contentType: "image/png",
     },
+    techonologies: req.body.techonologies,
+    links: JSON.parse(req.body.links),
   };
-  Project.findByIdAndUpdate({ _id: req.params.id }, techData)
-    .then((tech) => {
+  Project.findByIdAndUpdate({ _id: req.params.id }, projectData)
+    .then((project) => {
       fs.unlink(
         path.join(
           path.dirname(require.main.filename) +
             "/" +
-            uploadsTechnologiesURL +
-            tech.logo.name
+            uploadsProjectsURL +
+            project.logo.name
         ),
         (err) => {
           if (err) console.log(err);
         }
       );
-      Technology.findOne({ _id: req.params.id })
+      Project.findOne({ _id: req.params.id })
         .then((tech) => res.send(tech))
         .catch(next);
     })
@@ -120,7 +123,7 @@ const upload = multer({ storage: storage });
 module.exports = {
   getProjects,
   postProject,
-  putTechnology,
+  putProject,
   deleteProject,
   upload,
 };

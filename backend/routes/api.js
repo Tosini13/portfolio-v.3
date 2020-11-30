@@ -6,7 +6,11 @@ const projects = require("../controllers/projects");
 //#region PROJECTS
 router.get("/projects", projects.getProjects);
 router.post("/projects", projects.upload.single("view"), projects.postProject);
-
+router.put(
+  "/projects/:id",
+  projects.upload.single("view"),
+  projects.putProject
+);
 router.delete("/projects/:id", projects.deleteProject);
 //#endregion PROJECTS
 
