@@ -13,6 +13,7 @@ import AddLogo from "../../global/AddLogo";
 import {
   StoreTechnologiesContext,
   Technology,
+  TechnologyFormType,
 } from "../../../store/technology";
 
 const GridContainerStyled = styled(Grid)`
@@ -37,15 +38,26 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
   const technologiesStore = useContext(StoreTechnologiesContext);
   const { add, update } = technologiesStore;
 
-  const [name, setName] = useState<string>(technology ? technology.name : "");
-  const [description, setDescription] = useState<string>(
-    technology?.description ? technology.description : ""
-  );
   const [image, setImage] = useState<any>(
     technology ? technology.logo : undefined
   );
 
-  const { handleSubmit, register, errors } = useForm();
+  const { handleSubmit, register, errors, reset } = useForm<TechnologyFormType>(
+    {
+      defaultValues: {
+        name: technology?.name,
+        description: technology?.description,
+      },
+    }
+  );
+
+  useEffect(() => {
+    reset({
+      name: technology?.name,
+      description: technology?.description,
+    });
+  }, [technology, reset]);
+
   const onSubmit = (values: any) => {
     if (technology) {
       update({
@@ -59,20 +71,6 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
     }
     handleClose();
   };
-
-  const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
-
-  const handleChangeDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDescription(e.target.value);
-  };
-
-  useEffect(() => {
-    setName(technology ? technology.name : "");
-    setDescription(technology?.description ? technology.description : "");
-  }, [technology, open]);
-
   return (
     <Dialog
       onClose={handleClose}
@@ -93,8 +91,6 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
           <GridItemStyled item>
             <TextField
               label="Name"
-              value={name}
-              onChange={handleChangeName}
               inputProps={{
                 name: "name",
                 ref: register({
@@ -110,8 +106,6 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
           <GridItemStyled item>
             <TextField
               label="Desription"
-              value={description}
-              onChange={handleChangeDescription}
               multiline
               inputProps={{
                 name: "description",

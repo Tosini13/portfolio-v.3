@@ -13,6 +13,7 @@ const TechnolodySchema = new Schema({
   logo: {
     name: String,
     contentType: String,
+    required: false,
   },
 });
 

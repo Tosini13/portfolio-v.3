@@ -60,7 +60,14 @@ type AddLogo = {
 };
 
 const AddLogo: React.FC<AddLogo> = ({ image, setImage }) => {
-  console.log(image);
+  const getUrl = () => {
+    if (image) {
+      return URL.createObjectURL(image);
+    } else {
+      return undefined;
+    }
+  };
+
   const handleChangeImage = async (e: any) => {
     const image = e.target.files[0];
     const options = {
@@ -78,14 +85,6 @@ const AddLogo: React.FC<AddLogo> = ({ image, setImage }) => {
 
   const onRemoveImage = () => {
     setImage(null);
-  };
-
-  const getUrl = () => {
-    if (image) {
-      return URL.createObjectURL(image);
-    } else {
-      return undefined;
-    }
   };
 
   const imgUrl = getUrl();

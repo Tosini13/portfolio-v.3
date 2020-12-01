@@ -14,6 +14,7 @@ type TechnologyType = {
 };
 
 type TechnologyCreationType = Omit<Technology, "id">;
+export type TechnologyFormType = Omit<Technology, "id" | "logo">;
 
 export class Technology {
   id: Id;
@@ -81,7 +82,6 @@ class TechnologiesStore {
   };
 
   update = async (technology: Technology) => {
-    console.log(technology);
     let formData = new FormData();
     formData.append("name", technology.name);
     if (technology.description) {

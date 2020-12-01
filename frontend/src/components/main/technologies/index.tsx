@@ -13,7 +13,7 @@ import {
 } from "../../../store/technology";
 import SectionComponent from "../Section";
 import SpeedDialComponent from "../../global/SpeedDial";
-import TechnologyForm from "./Form";
+import TechnologyForm from "./TechnologyForm";
 import TechnologyDetails from "./details/TechnologyDetails";
 
 export enum ViewTechnologies {

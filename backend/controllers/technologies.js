@@ -58,10 +58,12 @@ const putTechnology = (req, res, next) => {
   const techData = {
     name: req.body.name,
     description: req.body.description,
-    logo: {
-      name: req.file.filename,
-      contentType: "image/png",
-    },
+    logo: req.file
+      ? {
+          name: req.file.filename,
+          contentType: "image/png",
+        }
+      : undefined,
   };
   Technology.findByIdAndUpdate({ _id: req.params.id }, techData)
     .then((tech) => {
