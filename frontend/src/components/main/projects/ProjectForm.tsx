@@ -11,7 +11,11 @@ import {
 import styled from "styled-components";
 
 import AddLogo from "../../global/AddLogo";
-import { Project, StoreProjectsContext, Links } from "../../../store/project";
+import {
+  Project,
+  StoreProjectsContext,
+  ProjectFormType,
+} from "../../../store/project";
 
 const GridContainerStyled = styled(Grid)`
   padding: 10px 30px;
@@ -35,14 +39,9 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
   const projectsStore = useContext(StoreProjectsContext);
   const { add, update } = projectsStore;
 
-  const [name, setName] = useState<string>(project ? project.name : "");
-  const [description, setDescription] = useState<string>(
-    project?.description ? project.description : ""
-  );
   const [image, setImage] = useState<any>(project ? project.view : undefined);
-  const [links, setLinks] = useState<Links | undefined>(undefined);
 
-  const { handleSubmit, register, errors } = useForm();
+  const { handleSubmit, register, errors, reset } = useForm<ProjectFormType>();
   const onSubmit = (values: any) => {
     console.log(values);
     if (project) {
@@ -70,25 +69,14 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
     handleClose();
   };
 
-  const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
-
-  const handleChangeDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDescription(e.target.value);
-  };
-
-  const handleChangeLinks = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLinks({
-      ...links,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   useEffect(() => {
-    setName(project ? project.name : "");
-    setDescription(project?.description ? project.description : "");
-  }, [project, open]);
+    reset({
+      name: project?.name,
+      description: project?.description,
+      github: project?.links?.github,
+      www: project?.links?.www,
+    });
+  }, [reset, project]);
 
   return (
     <Dialog
@@ -110,8 +98,6 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
           <GridItemStyled item>
             <TextField
               label="Name"
-              value={name}
-              onChange={handleChangeName}
               inputProps={{
                 name: "name",
                 ref: register({
@@ -127,8 +113,6 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
           <GridItemStyled item>
             <TextField
               label="Desription"
-              value={description}
-              onChange={handleChangeDescription}
               multiline
               inputProps={{
                 name: "description",
@@ -141,8 +125,6 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
           <GridItemStyled item>
             <TextField
               label="GitHub"
-              value={links?.github}
-              onChange={handleChangeLinks}
               multiline
               inputProps={{
                 name: "github",
@@ -155,8 +137,6 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
           <GridItemStyled item>
             <TextField
               label="www"
-              value={links?.www}
-              onChange={handleChangeLinks}
               multiline
               inputProps={{
                 name: "www",

@@ -21,6 +21,10 @@ type ProjectType = {
 };
 
 type ProjectCreationType = Omit<ProjectType, "_id">;
+export type ProjectFormType = Omit<ProjectType, "_id" | "view" | "links"> & {
+  github?: string;
+  www?: string;
+};
 
 export class Project {
   id: Id;
