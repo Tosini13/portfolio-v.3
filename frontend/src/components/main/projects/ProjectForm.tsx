@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core";
 import styled from "styled-components";
 
-import AddLogo from "../../global/AddLogo";
+import AddLogo, { ImageModel } from "../../global/AddLogo";
 import {
   Project,
   StoreProjectsContext,
@@ -39,11 +39,17 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
   const projectsStore = useContext(StoreProjectsContext);
   const { add, update } = projectsStore;
 
-  const [image, setImage] = useState<any>(project ? project.view : undefined);
+  const [image, setImage] = useState<ImageModel | undefined>(
+    project
+      ? {
+          name: project.view,
+          file: undefined,
+        }
+      : undefined
+  );
 
   const { handleSubmit, register, errors, reset } = useForm<ProjectFormType>();
   const onSubmit = (values: any) => {
-    console.log(values);
     if (project) {
       update({
         id: project.id,
@@ -53,7 +59,8 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
           github: values.github,
           www: values.www,
         },
-        view: image,
+        view: image?.name,
+        file: image?.file,
       });
     } else {
       add({
@@ -63,9 +70,11 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
           github: values.github,
           www: values.www,
         },
-        view: image,
+        view: image?.name,
+        file: image?.file,
       });
     }
+    setImage(undefined);
     handleClose();
   };
 
@@ -76,6 +85,12 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
       github: project?.links?.github,
       www: project?.links?.www,
     });
+    if (project) {
+      setImage({
+        name: project.view,
+        file: undefined,
+      });
+    }
   }, [reset, project]);
 
   return (

@@ -13,7 +13,11 @@ type TechnologyType = {
   logo?: any;
 };
 
-type TechnologyCreationType = Omit<Technology, "id">;
+type TechnologyCreationType = Omit<TechnologyType, "_id"> & { file?: any };
+type TechnologyUpdateType = Omit<TechnologyType, "_id"> & {
+  id: Id;
+  file?: any;
+};
 export type TechnologyFormType = Omit<Technology, "id" | "logo">;
 
 export class Technology {
@@ -59,7 +63,12 @@ class TechnologiesStore {
     if (technology.description) {
       formData.append("description", technology.description);
     }
-    formData.append("logo", technology.logo);
+    if (technology.file) {
+      formData.append("file", technology.file);
+    }
+    if (technology.logo) {
+      formData.append("logo", technology.logo);
+    }
     axios
       .post<TechnologyType>(`${apiUrl}/technologies`, formData, {
         headers: {
@@ -81,13 +90,20 @@ class TechnologiesStore {
       .catch((err) => console.log(err));
   };
 
-  update = async (technology: Technology) => {
+  update = async (technology: TechnologyUpdateType) => {
+    console.log(technology);
     let formData = new FormData();
     formData.append("name", technology.name);
     if (technology.description) {
       formData.append("description", technology.description);
     }
-    formData.append("logo", technology.logo);
+    if (technology.logo) {
+      formData.append("logo", technology.logo);
+    }
+    if (technology.file) {
+      formData.append("file", technology.file);
+    }
+    console.log(formData);
     const data = await axios.put<TechnologyType>(
       `${apiUrl}/technologies/${technology.id}`,
       formData,

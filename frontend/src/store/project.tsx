@@ -15,12 +15,13 @@ type ProjectType = {
   _id: Id;
   name: string;
   description?: string;
-  view?: any;
+  view?: string;
   technologies?: string[];
   links?: Links;
 };
 
-type ProjectCreationType = Omit<ProjectType, "_id">;
+type ProjectCreationType = Omit<ProjectType, "_id"> & { file?: any };
+type ProjectUpdateType = Omit<ProjectType, "_id"> & { id: Id; file?: any };
 export type ProjectFormType = Omit<ProjectType, "_id" | "view" | "links"> & {
   github?: string;
   www?: string;
@@ -80,6 +81,7 @@ class ProjectStore {
   };
 
   add = async (project: ProjectCreationType) => {
+    console.log(project);
     let formData = new FormData();
     formData.append("name", project.name);
     if (project.description) {
@@ -91,7 +93,12 @@ class ProjectStore {
     if (project.links) {
       formData.append("links", JSON.stringify(project.links));
     }
-    formData.append("view", project.view);
+    if (project.view) {
+      formData.append("view", project.view);
+    }
+    if (project.file) {
+      formData.append("file", project.file);
+    }
     axios
       .post<ProjectType>(`${apiUrl}/projects`, formData, {
         headers: {
@@ -115,7 +122,7 @@ class ProjectStore {
       .catch((err) => console.log(err));
   };
 
-  update = async (project: Project) => {
+  update = async (project: ProjectUpdateType) => {
     console.log(project);
     let formData = new FormData();
     formData.append("name", project.name);
@@ -123,14 +130,17 @@ class ProjectStore {
       formData.append("description", project.description);
     }
     if (project.technologies) {
-      console.log(project.technologies.toString());
-      formData.append("technologies", project.technologies.toString());
+      formData.append("technologies", JSON.stringify(project.technologies));
     }
     if (project.links) {
-      console.log(project.links.toString());
-      formData.append("links", project.links.toString());
+      formData.append("links", JSON.stringify(project.links));
     }
-    formData.append("view", project.view);
+    if (project.view) {
+      formData.append("view", project.view);
+    }
+    if (project.file) {
+      formData.append("file", project.file);
+    }
     const data = await axios.put<ProjectType>(
       `${apiUrl}/projects/${project.id}`,
       formData,

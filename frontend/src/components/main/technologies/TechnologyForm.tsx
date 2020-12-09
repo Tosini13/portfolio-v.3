@@ -9,7 +9,7 @@ import {
   TextField,
 } from "@material-ui/core";
 import styled from "styled-components";
-import AddLogo from "../../global/AddLogo";
+import AddLogo, { ImageModel } from "../../global/AddLogo";
 import {
   StoreTechnologiesContext,
   Technology,
@@ -38,8 +38,13 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
   const technologiesStore = useContext(StoreTechnologiesContext);
   const { add, update } = technologiesStore;
 
-  const [image, setImage] = useState<any>(
-    technology ? technology.logo : undefined
+  const [image, setImage] = useState<ImageModel | undefined>(
+    technology
+      ? {
+          name: technology.logo,
+          file: undefined,
+        }
+      : undefined
   );
 
   const { handleSubmit, register, errors, reset } = useForm<TechnologyFormType>(
@@ -56,6 +61,12 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
       name: technology?.name,
       description: technology?.description,
     });
+    if (technology) {
+      setImage({
+        name: technology.logo,
+        file: undefined,
+      });
+    }
   }, [technology, reset]);
 
   const onSubmit = (values: any) => {
@@ -64,13 +75,21 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
         id: technology.id,
         name: values.name,
         description: values.description,
-        logo: image,
+        logo: image?.name,
+        file: image?.file,
       });
     } else {
-      add({ name: values.name, description: values.description, logo: image });
+      add({
+        name: values.name,
+        description: values.description,
+        logo: image?.name,
+        file: image?.file,
+      });
     }
+    setImage(undefined);
     handleClose();
   };
+
   return (
     <Dialog
       onClose={handleClose}

@@ -13,18 +13,23 @@ const getTechnologies = (req, res) => {
     } else {
       let techonologies = [];
       items.forEach((element) => {
-        const file = fs.readFileSync(
-          path.join(
-            path.dirname(require.main.filename) +
-              "/" +
-              uploadsTechnologiesURL +
-              element.logo.name
-          )
-        );
+        let file = undefined;
+        if (element.logo.name) {
+          file = fs.readFileSync(
+            path.join(
+              path.dirname(require.main.filename) +
+                "/" +
+                uploadsTechnologiesURL +
+                element.logo.name
+            )
+          );
+        }
         techonologies.push({
-          logo: `data:image/${element.logo.contentType};base64, ${file.toString(
-            "base64"
-          )}`,
+          logo: file
+            ? `data:image/${element.logo.contentType};base64, ${file.toString(
+                "base64"
+              )}`
+            : undefined,
           contentType: element.logo.contentType,
           name: element.name,
           description: element.description,
@@ -37,47 +42,69 @@ const getTechnologies = (req, res) => {
 };
 
 const postTechnology = (req, res, next) => {
-  const tech = {
+  let techData = {
     name: req.body.name,
     description: req.body.description,
-    logo: {
-      name: req.file.filename,
-      contentType: "image/png",
-    },
   };
-  Technology.create(tech, (err) => {
+  if (req.file && req.body.logo) {
+    techData = {
+      ...techData,
+      logo: {
+        name: req.file.filename,
+        contentType: "image/png",
+      },
+    };
+  }
+  if (!req.file && !req.body.logo) {
+    techData = {
+      ...techData,
+      logo: undefined,
+    };
+  }
+  Technology.create(techData, (err) => {
     if (err) {
       console.log(err);
     } else {
-      res.send(tech);
+      res.send(techData);
     }
   });
 };
 
 const putTechnology = (req, res, next) => {
-  const techData = {
+  let techData = {
     name: req.body.name,
     description: req.body.description,
-    logo: req.file
-      ? {
-          name: req.file.filename,
-          contentType: "image/png",
-        }
-      : undefined,
   };
+  if (req.file && req.body.logo) {
+    techData = {
+      ...techData,
+      logo: {
+        name: req.file.filename,
+        contentType: "image/png",
+      },
+    };
+  }
+  if (!req.file && !req.body.logo) {
+    techData = {
+      ...techData,
+      logo: undefined,
+    };
+  }
   Technology.findByIdAndUpdate({ _id: req.params.id }, techData)
     .then((tech) => {
-      fs.unlink(
-        path.join(
-          path.dirname(require.main.filename) +
-            "/" +
-            uploadsTechnologiesURL +
-            tech.logo.name
-        ),
-        (err) => {
-          if (err) console.log(err);
-        }
-      );
+      if (!req.file && !req.body.logo) {
+        fs.unlink(
+          path.join(
+            path.dirname(require.main.filename) +
+              "/" +
+              uploadsTechnologiesURL +
+              tech.logo.name
+          ),
+          (err) => {
+            if (err) console.log(err);
+          }
+        );
+      }
       Technology.findOne({ _id: req.params.id })
         .then((tech) => res.send(tech))
         .catch(next);
@@ -88,18 +115,22 @@ const putTechnology = (req, res, next) => {
 const deleteTechnology = (req, res, next) => {
   Technology.findByIdAndRemove({ _id: req.params.id })
     .then((tech) => {
-      fs.unlink(
-        path.join(
-          path.dirname(require.main.filename) +
-            "/" +
-            uploadsTechnologiesURL +
-            tech.logo.name
-        ),
-        (err) => {
-          if (err) console.log(err);
-          res.send(tech);
-        }
-      );
+      if (tech.logo.name) {
+        fs.unlink(
+          path.join(
+            path.dirname(require.main.filename) +
+              "/" +
+              uploadsTechnologiesURL +
+              tech.logo.name
+          ),
+          (err) => {
+            if (err) console.log(err);
+            res.send(tech);
+          }
+        );
+      } else {
+        res.send(tech);
+      }
     })
     .catch(next);
 };

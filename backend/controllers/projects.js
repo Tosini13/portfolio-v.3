@@ -13,18 +13,23 @@ const getProjects = (req, res) => {
     } else {
       let projects = [];
       items.forEach((element) => {
-        const file = fs.readFileSync(
-          path.join(
-            path.dirname(require.main.filename) +
-              "/" +
-              uploadsProjectsURL +
-              element.view.name
-          )
-        );
+        let file = undefined;
+        if (element.view.name) {
+          file = fs.readFileSync(
+            path.join(
+              path.dirname(require.main.filename) +
+                "/" +
+                uploadsProjectsURL +
+                element.view.name
+            )
+          );
+        }
         projects.push({
-          view: `data:image/${element.view.contentType};base64, ${file.toString(
-            "base64"
-          )}`,
+          view: file
+            ? `data:image/${element.view.contentType};base64, ${file.toString(
+                "base64"
+              )}`
+            : undefined,
           contentType: element.view.contentType,
           name: element.name,
           description: element.description,
@@ -39,7 +44,7 @@ const getProjects = (req, res) => {
 };
 
 const postProject = (req, res, next) => {
-  const project = {
+  let projectData = {
     name: req.body.name,
     description: req.body.description,
     view: {
@@ -49,43 +54,55 @@ const postProject = (req, res, next) => {
     techonologies: req.body.techonologies,
     links: JSON.parse(req.body.links),
   };
-  Project.create(project, (err) => {
+  Project.create(projectData, (err) => {
     if (err) {
       console.log(err);
     } else {
-      res.send(project);
+      res.send(projectData);
     }
   });
 };
 
 const putProject = (req, res, next) => {
-  console.log(req.body.links);
-  const projectData = {
+  let projectData = {
     name: req.body.name,
     description: req.body.description,
-    view: {
-      name: req.file.filename,
-      contentType: "image/png",
-    },
     techonologies: req.body.techonologies,
     links: JSON.parse(req.body.links),
   };
+  if (req.file && req.body.view) {
+    projectData = {
+      ...projectData,
+      view: {
+        name: req.file.filename,
+        contentType: "image/png",
+      },
+    };
+  }
+  if (!req.file && !req.body.view) {
+    projectData = {
+      ...projectData,
+      view: undefined,
+    };
+  }
   Project.findByIdAndUpdate({ _id: req.params.id }, projectData)
     .then((project) => {
-      fs.unlink(
-        path.join(
-          path.dirname(require.main.filename) +
-            "/" +
-            uploadsProjectsURL +
-            project.logo.name
-        ),
-        (err) => {
-          if (err) console.log(err);
-        }
-      );
-      Project.findOne({ _id: req.params.id })
-        .then((tech) => res.send(tech))
-        .catch(next);
+      if (!req.file && !req.body.view) {
+        fs.unlink(
+          path.join(
+            path.dirname(require.main.filename) +
+              "/" +
+              uploadsProjectsURL +
+              project.view.name
+          ),
+          (err) => {
+            if (err) console.log(err);
+          }
+        );
+        Project.findOne({ _id: req.params.id })
+          .then((tech) => res.send(tech))
+          .catch(next);
+      }
     })
     .catch(next);
 };
@@ -93,18 +110,22 @@ const putProject = (req, res, next) => {
 const deleteProject = (req, res, next) => {
   Project.findByIdAndRemove({ _id: req.params.id })
     .then((project) => {
-      fs.unlink(
-        path.join(
-          path.dirname(require.main.filename) +
-            "/" +
-            uploadsProjectsURL +
-            project.view.name
-        ),
-        (err) => {
-          if (err) console.log(err);
-          res.send(project);
-        }
-      );
+      if (project.view.name) {
+        fs.unlink(
+          path.join(
+            path.dirname(require.main.filename) +
+              "/" +
+              uploadsProjectsURL +
+              project.view.name
+          ),
+          (err) => {
+            if (err) console.log(err);
+            res.send(project);
+          }
+        );
+      } else {
+        res.send(project);
+      }
     })
     .catch(next);
 };

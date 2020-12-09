@@ -54,20 +54,17 @@ const TournamentCreateLogoTextFieldStyled = styled.input`
   display: none;
 `;
 
+export type ImageModel = {
+  name: string;
+  file?: any;
+};
+
 type AddLogo = {
-  image: any;
-  setImage: (image: any) => void;
+  image?: ImageModel;
+  setImage: (image?: ImageModel) => void;
 };
 
 const AddLogo: React.FC<AddLogo> = ({ image, setImage }) => {
-  const getUrl = () => {
-    if (image) {
-      return URL.createObjectURL(image);
-    } else {
-      return undefined;
-    }
-  };
-
   const handleChangeImage = async (e: any) => {
     const image = e.target.files[0];
     const options = {
@@ -77,17 +74,20 @@ const AddLogo: React.FC<AddLogo> = ({ image, setImage }) => {
     };
     try {
       const compressedFile = await imageCompression(image, options);
-      setImage(compressedFile);
+      console.log(compressedFile);
+      setImage({
+        name: URL.createObjectURL(compressedFile),
+        file: compressedFile,
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
   const onRemoveImage = () => {
-    setImage(null);
+    setImage(undefined);
   };
 
-  const imgUrl = getUrl();
   return (
     <LogoContainerStyled>
       <TournamentCreateLogoTextFieldStyled
@@ -97,11 +97,11 @@ const AddLogo: React.FC<AddLogo> = ({ image, setImage }) => {
         onChange={handleChangeImage}
       />
       <label htmlFor="file">
-        <LogoStyled src={imgUrl}>
-          {imgUrl ? null : <AddAPhotoIcon />}
+        <LogoStyled src={image?.name}>
+          {image?.name ? null : <AddAPhotoIcon />}
         </LogoStyled>
       </label>
-      {imgUrl ? (
+      {image?.name ? (
         <ButtonRemoveLogoStyled onClick={onRemoveImage}>
           <ClearIcon fontSize="small" color="secondary" />
         </ButtonRemoveLogoStyled>
