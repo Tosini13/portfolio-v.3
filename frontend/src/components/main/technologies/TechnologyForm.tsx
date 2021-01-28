@@ -1,13 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import {
-  Button,
-  Dialog,
-  DialogTitle,
-  Grid,
-  TextField,
-} from "@material-ui/core";
+import { Button, DialogTitle, Grid, TextField } from "@material-ui/core";
 import styled from "styled-components";
 import AddLogo, { ImageModel } from "../../global/AddLogo";
 import {
@@ -15,6 +9,7 @@ import {
   Technology,
   TechnologyFormType,
 } from "../../../store/technology";
+import { DialogStyled } from "../../../styled/components";
 
 const GridContainerStyled = styled(Grid)`
   padding: 10px;
@@ -91,7 +86,7 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
   };
 
   return (
-    <Dialog
+    <DialogStyled
       onClose={handleClose}
       aria-labelledby="simple-dialog-title"
       open={open}
@@ -135,13 +130,13 @@ const TechnologyForm: React.FC<TechnologyFormProps> = ({
             />
           </GridItemStyled>
           <GridItemStyled item>
-            <Button variant="contained" color="primary" type="submit">
+            <Button variant="contained" color="secondary" type="submit">
               {technology ? "UPDATE" : "ADD"}
             </Button>
           </GridItemStyled>
         </GridContainerStyled>
       </form>
-    </Dialog>
+    </DialogStyled>
   );
 };
 

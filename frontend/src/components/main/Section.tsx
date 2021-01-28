@@ -1,32 +1,47 @@
 import React from "react";
-
+import { motion } from "framer-motion";
 import styled from "styled-components";
 
-const Container = styled.div`
+import { Grid } from "@material-ui/core";
+import { mainTheme } from "../../styled/config";
+
+const Container = motion.custom(styled(Grid)`
   position: relative;
   padding: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-`;
+  min-height: 100vh;
+  background-color: ${mainTheme.palette.primary.dark};
+`);
 
-const Title = styled.div`
-  font-size: 30px;
-  padding: 5px 0px;
-  margin-bottom: 20px;
-`;
-
+const variantsDescription = {
+  hidden: {
+    y: "-100%",
+    scale: 0.8,
+  },
+  visible: {
+    y: 0,
+    scale: 1,
+  },
+  exit: {
+    y: "100%",
+    scale: "0.8",
+  },
+};
 export interface SectionComponentProps {
   title?: string;
   children?: React.ReactNode;
 }
 
-const SectionComponent: React.FC<SectionComponentProps> = ({
-  title,
-  children,
-}) => {
+const SectionComponent: React.FC<SectionComponentProps> = ({ children }) => {
   return (
-    <Container>
-      <Title>{title}</Title>
+    <Container
+      container
+      justify="center"
+      alignItems="center"
+      variants={variantsDescription}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       {children}
     </Container>
   );

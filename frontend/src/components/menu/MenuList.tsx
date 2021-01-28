@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { LocationConst } from "../../models/const";
 import styled from "styled-components";
 import { Grid } from "@material-ui/core";
+import { motion } from "framer-motion";
 
 const LinkStyled = styled(Link)`
   color: inherit;
@@ -22,11 +23,11 @@ const LinkStyled = styled(Link)`
   width: 100%;
 `;
 
-export interface SideBarMenuProps {}
+export interface MenuListProps {}
 
-const SideBarMenu: React.FC<SideBarMenuProps> = () => {
+const MenuList: React.FC<MenuListProps> = () => {
   return (
-    <List>
+    <List style={{ color: "white" }}>
       <ListItem button>
         <LinkStyled to={LocationConst.aboutMe}>
           <Grid container>
@@ -88,4 +89,4 @@ const SideBarMenu: React.FC<SideBarMenuProps> = () => {
   );
 };
 
-export default SideBarMenu;
+export default MenuList;

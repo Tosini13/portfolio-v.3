@@ -14,7 +14,23 @@ import {
 import SectionComponent from "../Section";
 import SpeedDialComponent from "../../global/SpeedDial";
 import TechnologyForm from "./TechnologyForm";
-import TechnologyDetails from "./details/TechnologyDetails";
+import TechnologyDetails from "./details/TechnologySummary";
+import AddTechnology from "./add";
+import styled from "styled-components";
+import { mainTheme } from "../../../styled/config";
+
+const GridItemStyled = styled(Grid)`
+  box-sizing: content-box;
+`;
+
+const GridAddItemStyled = styled(GridItemStyled)`
+  border: dashed 2px ${mainTheme.palette.secondary.dark};
+  border-radius: 5px;
+  transition: all ease-out 0.2s;
+  &:hover {
+    border-color: ${mainTheme.palette.secondary.light};
+  }
+`;
 
 export enum ViewTechnologies {
   column = "column",
@@ -65,18 +81,20 @@ const Technologies: React.FC = observer(() => {
   return (
     <SectionComponent title={"Technologies"}>
       <Grid container spacing={2} alignItems="center" justify="space-around">
-        {technologies.map((tech) => {
-          return (
+        {technologies.map((tech) => (
+          <GridItemStyled item sm={2} key={tech.id}>
             <TechnologyDetails
-              key={tech.id}
               tech={tech}
-              remove={remove}
+              remove={() => remove(tech.id)}
               view={view}
               action={action}
               handleOpen={handleOpen}
             />
-          );
-        })}
+          </GridItemStyled>
+        ))}
+        <GridAddItemStyled item sm={2}>
+          <AddTechnology />
+        </GridAddItemStyled>
       </Grid>
       <SpeedDialComponent
         actions={actions}
