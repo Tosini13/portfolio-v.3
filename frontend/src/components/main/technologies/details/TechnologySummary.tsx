@@ -30,7 +30,7 @@ export const GridItemStyled = styled(Grid)`
   min-height: 200px;
 `;
 
-const ImageGridStyled = styled(Grid)<{ moved?: string }>`
+export const ImageGridStyled = styled(Grid)<{ moved?: string }>`
   transition: all ease-in 0.3s;
 `;
 

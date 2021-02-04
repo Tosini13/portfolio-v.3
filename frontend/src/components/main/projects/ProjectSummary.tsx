@@ -72,6 +72,7 @@ const variantsActions = {
 
 export interface ProjectSummaryProps {
   project: Project;
+  selected: boolean;
   action: boolean;
   handleOpen: (project: Project) => void;
   handleOpenProject: () => void;
@@ -80,6 +81,7 @@ export interface ProjectSummaryProps {
 const ProjectSummary: React.FC<ProjectSummaryProps> = ({
   project,
   action,
+  selected,
   handleOpen,
   handleOpenProject,
 }) => {
@@ -88,58 +90,48 @@ const ProjectSummary: React.FC<ProjectSummaryProps> = ({
   const [focus, setFocus] = useState(false);
 
   return (
-    <PaperItemStyled
-      view={project.view}
-      variants={variantsActions}
-      initial="initial"
-      whileHover={
-        action
-          ? {}
-          : {
-              zIndex: 2,
-              rotateX: 0,
-              rotateY: 0,
-              rotateZ: 0,
-              scale: 1.2,
-              x: 20,
-              transition: { ease: "easeOut" },
-            }
-      }
-      onHoverStart={() => setFocus(true)}
-      onHoverEnd={() => setFocus(false)}
-      onClick={handleOpenProject}
-    >
-      <AnimatePresence>
-        {action ? (
-          <ActionProjectStyled
-            item
-            variants={variantsActions}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-          >
-            <IconButton onClick={() => handleOpen(project)}>
-              <EditIcon color="primary" />
-            </IconButton>
-            <IconButton onClick={() => remove(project.id)}>
-              <DeleteForeverIcon color="primary" />
-            </IconButton>
-          </ActionProjectStyled>
-        ) : null}
-      </AnimatePresence>
-      {focus ? (
-        <AnimatePresence>
-          <GridItemStyled
-            item
-            variants={variantsContent}
-            initial="hidden"
-            animate="visible"
-          >
-            {project.description}
-          </GridItemStyled>
-        </AnimatePresence>
-      ) : null}
-    </PaperItemStyled>
+    <>
+      {selected ? null : (
+        <PaperItemStyled
+          view={project.view}
+          variants={variantsActions}
+          initial="initial"
+          whileHover={
+            action
+              ? {}
+              : {
+                  zIndex: 2,
+                  rotateX: 0,
+                  rotateY: 0,
+                  rotateZ: 0,
+                  scale: 1.2,
+                  x: 20,
+                  transition: { ease: "easeOut" },
+                }
+          }
+          onClick={handleOpenProject}
+        >
+          <AnimatePresence>
+            {action ? (
+              <ActionProjectStyled
+                item
+                variants={variantsActions}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+              >
+                <IconButton onClick={() => handleOpen(project)}>
+                  <EditIcon color="primary" />
+                </IconButton>
+                <IconButton onClick={() => remove(project.id)}>
+                  <DeleteForeverIcon color="primary" />
+                </IconButton>
+              </ActionProjectStyled>
+            ) : null}
+          </AnimatePresence>
+        </PaperItemStyled>
+      )}
+    </>
   );
 };
 
