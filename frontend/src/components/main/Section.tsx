@@ -3,13 +3,13 @@ import { motion } from "framer-motion";
 import styled from "styled-components";
 
 import { Grid } from "@material-ui/core";
-import { mainTheme } from "../../styled/config";
 
 const Container = motion.custom(styled(Grid)`
   position: relative;
-  padding: 10px;
+  padding: 20px;
   min-height: 100vh;
-  background-color: ${mainTheme.palette.primary.dark};
+  width: 50vw;
+  margin: auto;
 `);
 
 const variantsDescription = {

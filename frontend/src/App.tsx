@@ -10,33 +10,40 @@ import { useLocation } from "react-router-dom";
 import { LocationConst } from "./models/const";
 import Projects from "./components/main/projects";
 import Body from "./components/main/Body";
+import { autorun } from "mobx";
 
-const isBrowser = typeof window !== `undefined`;
+const MainContainer = styled.div`
+  background-color: ${mainTheme.palette.primary.dark};
+`;
 
 function App() {
   const [expanded, setExpanded] = useState<boolean>(false);
   const location = useLocation();
 
-  const handleScroll = () => {
-    const y = document?.getElementById("main-container")?.scrollTop;
-    console.log(y);
-    if (!expanded && y && y > 400) {
+  const handleScroll = (e: Event) => {
+    const y = window.pageYOffset;
+    if (y > 400) {
       setExpanded(true);
     }
-    if (expanded && y && y < 400) {
+    if (y <= 400) {
       setExpanded(false);
     }
   };
 
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <Body expanded={expanded} handleScroll={handleScroll}>
-      <div id="mainContainer">
+    <MainContainer>
+      <div style={{ width: expanded ? "80%" : "z0%", margin: "auto" }}>
+        <Body expanded={expanded} />
         <AboutMe key={LocationConst.aboutMe} />
         <Skills key={LocationConst.skills} />
         <Technologies key={LocationConst.technologies} />
         <Projects key={LocationConst.projects} />
       </div>
-    </Body>
+    </MainContainer>
   );
 }
 

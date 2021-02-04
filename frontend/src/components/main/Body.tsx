@@ -23,34 +23,37 @@ const BodyGridItem = styled(Grid)`
   }
 `;
 
+const SideContainer = styled.div`
+  width: 25vw;
+  min-width: 210px;
+  position: fixed;
+  top: 0px;
+`;
+
+const LeftSideContainer = styled(SideContainer)`
+  left: 0px;
+  border: black solid 1px;
+`;
+
+const RightSideContainer = styled(SideContainer)`
+  right: 0px;
+  border: black solid 1px;
+`;
+
 export interface BodyProps {
   expanded: boolean;
-  handleScroll: () => void;
 }
 
-const Body: React.FC<BodyProps> = ({ children, expanded, handleScroll }) => {
+const Body: React.FC<BodyProps> = ({ expanded }) => {
   return (
-    <BodyGridContainer
-      container
-      alignItems="center"
-      justify="center"
-      style={{ width: "100%" }}
-    >
-      <Grid item lg={2}>
+    <>
+      <LeftSideContainer>
         <Menu expanded={expanded} />
-      </Grid>
-      <BodyGridItem
-        item
-        lg={expanded ? 8 : 2}
-        onScroll={handleScroll}
-        id="main-container"
-      >
-        {children}
-      </BodyGridItem>
-      <Grid item lg={2}>
+      </LeftSideContainer>
+      <RightSideContainer>
         <ProfileSideBar />
-      </Grid>
-    </BodyGridContainer>
+      </RightSideContainer>
+    </>
   );
 };
 
