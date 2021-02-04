@@ -1,49 +1,41 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 
 import styled from "styled-components";
 
 import { mainTheme } from "./styled/config";
+import SideBar from "./components/menu/SideBar";
 import AboutMe from "./components/main/aboutMe";
 import Technologies from "./components/main/technologies";
 import Skills from "./components/main/skills";
-import { useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { LocationConst } from "./models/const";
 import Projects from "./components/main/projects";
-import Body from "./components/main/Body";
-import { autorun } from "mobx";
 
-const MainContainer = styled.div`
-  background-color: ${mainTheme.palette.primary.dark};
+const Body = styled.div`
+  display: flex;
+  background-color: ${mainTheme.palette.secondary.main};
+  height: 100vh;
+  overflow: hidden;
+`;
+const Main = styled.main`
+  flex-grow: 1;
 `;
 
 function App() {
-  const [expanded, setExpanded] = useState<boolean>(false);
-  const location = useLocation();
-
-  const handleScroll = (e: Event) => {
-    const y = window.pageYOffset;
-    if (y > 400) {
-      setExpanded(true);
-    }
-    if (y <= 400) {
-      setExpanded(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <MainContainer>
-      <div style={{ width: expanded ? "80%" : "z0%", margin: "auto" }}>
-        <Body expanded={expanded} />
-        <AboutMe key={LocationConst.aboutMe} />
-        <Skills key={LocationConst.skills} />
-        <Technologies key={LocationConst.technologies} />
-        <Projects key={LocationConst.projects} />
-      </div>
-    </MainContainer>
+    <BrowserRouter>
+      <Body>
+        <SideBar />
+        <Main>
+          <Switch>
+            <Route exact path={LocationConst.aboutMe} component={AboutMe} />
+            <Route path={LocationConst.skills} component={Skills} />
+            <Route path={LocationConst.technologies} component={Technologies} />
+            <Route path={LocationConst.projects} component={Projects} />
+          </Switch>
+        </Main>
+      </Body>
+    </BrowserRouter>
   );
 }
 

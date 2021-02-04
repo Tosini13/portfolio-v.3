@@ -10,7 +10,7 @@ import { Grid, IconButton, Paper } from "@material-ui/core";
 import { Project, StoreProjectsContext } from "../../../store/project";
 import styled from "styled-components";
 
-const PaperItemStyled = motion.custom(styled(Paper)<{ view: string }>`
+export const PaperItemStyled = motion.custom(styled(Paper)<{ view?: string }>`
   position: relative;
   cursor: pointer;
   width: 300px;
@@ -23,8 +23,12 @@ const PaperItemStyled = motion.custom(styled(Paper)<{ view: string }>`
 
 const GridItemStyled = motion.custom(styled(Grid)`
   background-color: rgba(0, 0, 0, 0.5);
-  padding: 5px;
+  padding: 10px;
+  border-radius: 2px;
   color: white;
+  position: absolute;
+  right: 2px;
+  top: 2px;
 `);
 
 const ActionProjectStyled = motion.custom(styled(Grid)`
@@ -45,10 +49,8 @@ const variantsContent = {
   },
 };
 
-const variantsActions = {
-  hidden: {
-    opacity: 0,
-  },
+const variantsPaper = {
+  hidden: {},
   visible: {
     opacity: 1,
     y: "-105%",
@@ -59,16 +61,27 @@ const variantsActions = {
   },
 };
 
+const variantsActions = {
+  initial: {
+    rotateX: 4.2,
+    rotateY: 3.2,
+    rotateZ: 3.2,
+    zIndex: 1,
+  },
+};
+
 export interface ProjectSummaryProps {
   project: Project;
   action: boolean;
   handleOpen: (project: Project) => void;
+  handleOpenProject: () => void;
 }
 
 const ProjectSummary: React.FC<ProjectSummaryProps> = ({
   project,
   action,
   handleOpen,
+  handleOpenProject,
 }) => {
   const technologiesStore = useContext(StoreProjectsContext);
   const { remove } = technologiesStore;
@@ -77,16 +90,24 @@ const ProjectSummary: React.FC<ProjectSummaryProps> = ({
   return (
     <PaperItemStyled
       view={project.view}
+      variants={variantsActions}
+      initial="initial"
       whileHover={
         action
           ? {}
           : {
-              scale: 1.3,
+              zIndex: 2,
+              rotateX: 0,
+              rotateY: 0,
+              rotateZ: 0,
+              scale: 1.2,
+              x: 20,
               transition: { ease: "easeOut" },
             }
       }
       onHoverStart={() => setFocus(true)}
       onHoverEnd={() => setFocus(false)}
+      onClick={handleOpenProject}
     >
       <AnimatePresence>
         {action ? (
@@ -106,67 +127,18 @@ const ProjectSummary: React.FC<ProjectSummaryProps> = ({
           </ActionProjectStyled>
         ) : null}
       </AnimatePresence>
-      <Grid
-        container
-        direction="column"
-        justify="space-between"
-        style={{ height: "100%" }}
-      >
-        {focus ? (
-          <>
-            <AnimatePresence>
-              <GridItemStyled
-                item
-                variants={variantsContent}
-                initial="hidden"
-                animate="visible"
-              >
-                <Grid container justify="space-between" alignItems="center">
-                  <Grid item>{project.name}</Grid>
-                  <Grid item>
-                    <Grid container spacing={1}>
-                      {project.links?.github ? (
-                        <Grid item>
-                          <IconButton
-                            color="secondary"
-                            href={project.links.github}
-                            target="_blank"
-                            size="small"
-                          >
-                            <GitHubIcon fontSize="small" />
-                          </IconButton>
-                        </Grid>
-                      ) : null}
-                      {project.links?.www ? (
-                        <Grid item>
-                          <IconButton
-                            color="secondary"
-                            href={project.links.www}
-                            target="_blank"
-                            size="small"
-                          >
-                            <LanguageIcon fontSize="small" />
-                          </IconButton>
-                        </Grid>
-                      ) : null}
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </GridItemStyled>
-            </AnimatePresence>
-            <AnimatePresence>
-              <GridItemStyled
-                item
-                variants={variantsContent}
-                initial="hidden"
-                animate="visible"
-              >
-                {project.description}
-              </GridItemStyled>
-            </AnimatePresence>
-          </>
-        ) : null}
-      </Grid>
+      {focus ? (
+        <AnimatePresence>
+          <GridItemStyled
+            item
+            variants={variantsContent}
+            initial="hidden"
+            animate="visible"
+          >
+            {project.description}
+          </GridItemStyled>
+        </AnimatePresence>
+      ) : null}
     </PaperItemStyled>
   );
 };
