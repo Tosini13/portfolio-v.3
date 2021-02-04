@@ -31,6 +31,8 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
+    "start:backend": "cd .. && cd backend/ && systemctl start mongod && nodemon index.js",
+    "stop:backend": "systemctl stop mongod",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
