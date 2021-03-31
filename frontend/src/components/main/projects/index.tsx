@@ -88,13 +88,14 @@ const Projects: React.FC<ProjectsProps> = observer(() => {
             />
           </Grid>
           <Grid item md={8}>
-            {projects.map((project) => {
+            {projects.map((project, index) => { // TODO: remove index - only for color
               if (selected?.id === project.id) {
                 return (
                   <ProjectDetails
                     key={project.id}
                     project={project}
                     handleClose={() => setSelected(undefined)}
+                    index={index}
                   />
                 );
               }

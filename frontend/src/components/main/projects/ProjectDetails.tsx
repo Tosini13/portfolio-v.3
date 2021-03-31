@@ -11,15 +11,16 @@ import { Close } from "@material-ui/icons";
 
 const GridContainerStyled = motion.custom(styled(Grid)`
   height: 100%;
+  margin: 10px;
+  position: relative;
 `);
 
 const GridContentStyled = styled(Grid)<{ color: string | number }>`
-  position: relative;
-  box-shadow: -5px 0px 4px rgba(0, 0, 0, 0.25);
+  background-color: transparent;
+  border: black solid 1.2px;
+  border-radius: 2px;
   ${(props) =>
-    props.color
-      ? `background-color: ${props.color};`
-      : "background-color: transparent"};
+    props.color ? `border-color: ${props.color};` : "border-color: black"};
 `;
 
 const GridItemPaperStyled = styled(Grid)`
@@ -44,12 +45,17 @@ const CloseIconButtonStyled = styled(IconButton)`
   top: 5px;
 `;
 
+const TitleStyled = styled(Typography)`
+  font-family: system-ui;
+  text-shadow: 5px 5px rgba(0, 0, 0, 0.3);
+`;
+
 const variantsContainer = {
   hidden: {
-    x: 300,
+    opacity: 0,
   },
   visible: {
-    x: 0,
+    opacity: 1,
     transition: {
       duration: 0.4,
     },
@@ -58,13 +64,15 @@ const variantsContainer = {
 export interface ProjectDetailsProps {
   project?: Project;
   handleClose: () => void;
+  index: number;
 }
 
 const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   project,
   handleClose,
+  index,
 }) => {
-  const color = "darkgoldenrod"; // TODO: choose color for each project
+  const color = ["rgba(0,0,0,0.2)", "#2c8f62", "black"]; // TODO: choose color for each project
 
   const technologiesStore = useContext(StoreTechnologiesContext);
   const { technologies, fetch } = technologiesStore;
@@ -84,7 +92,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
             animate="visible"
           >
             <Grid item md={4}></Grid>
-            <GridContentStyled item md={8} color={color}>
+            <GridContentStyled item md={8} color={color[index % color.length]}>
               <Grid
                 container
                 direction="column"
@@ -92,9 +100,9 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
                 spacing={3}
               >
                 <Grid item>
-                  <Typography variant="h3" align="center">
+                  <TitleStyled variant="h3" align="center">
                     {project?.name}
-                  </Typography>
+                  </TitleStyled>
                 </Grid>
                 <GridItemPaperStyled item>
                   {project?.view ? (
@@ -111,7 +119,9 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
                             <img
                               src={tech.logo}
                               alt="logo"
-                              style={{ height: "50px" }}
+                              style={{
+                                height: "50px",
+                              }}
                             />
                           </Grid>
                         ))}
@@ -123,10 +133,10 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({
                   <Typography>{project?.description}</Typography>
                 </Grid>
               </Grid>
-              <CloseIconButtonStyled onClick={handleClose}>
-                <Close />
-              </CloseIconButtonStyled>
             </GridContentStyled>
+            <CloseIconButtonStyled onClick={handleClose}>
+              <Close />
+            </CloseIconButtonStyled>
           </GridContainerStyled>
         </AnimatePresence>
       ) : null}
